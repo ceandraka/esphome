@@ -27,6 +27,8 @@ class TCS34725Component : public PollingComponent, public i2c::I2CDevice {
  public:
   void set_integration_time(TCS34725IntegrationTime integration_time);
   void set_gain(TCS34725Gain gain);
+  void set_interrupt_low(float interrupt_low);
+  void set_interrupt_high(float interrupt_high);
 
   void set_clear_sensor(sensor::Sensor *clear_sensor) { clear_sensor_ = clear_sensor; }
   void set_red_sensor(sensor::Sensor *red_sensor) { red_sensor_ = red_sensor; }
@@ -51,6 +53,8 @@ class TCS34725Component : public PollingComponent, public i2c::I2CDevice {
   sensor::Sensor *color_temperature_sensor_{nullptr};
   TCS34725IntegrationTime integration_time_{TCS34725_INTEGRATION_TIME_2_4MS};
   TCS34725Gain gain_{TCS34725_GAIN_1X};
+  uint16_t interrupt_low_;
+  uint16_t interrupt_high_;
 };
 
 }  // namespace tcs34725

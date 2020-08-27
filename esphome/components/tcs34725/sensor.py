@@ -11,6 +11,8 @@ CONF_RED_CHANNEL = 'red_channel'
 CONF_GREEN_CHANNEL = 'green_channel'
 CONF_BLUE_CHANNEL = 'blue_channel'
 CONF_CLEAR_CHANNEL = 'clear_channel'
+CONF_INTERRUPT_LOW = 'interrupt_low'
+CONF_INTERRUPT_HIGH = 'interrupt_high'
 
 tcs34725_ns = cg.esphome_ns.namespace('tcs34725')
 TCS34725Component = tcs34725_ns.class_('TCS34725Component', cg.PollingComponent, i2c.I2CDevice)
@@ -48,6 +50,8 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_INTEGRATION_TIME, default='2.4ms'):
         cv.enum(TCS34725_INTEGRATION_TIMES, lower=True),
     cv.Optional(CONF_GAIN, default='1X'): cv.enum(TCS34725_GAINS, upper=True),
+    cv.Optional(CONF_INTERRUPT_LOW, default=0.0): cv.percentage,
+    cv.Optional(CONF_INTERRUPT_HIGH, default=1.0): cv.percentage,
 }).extend(cv.polling_component_schema('60s')).extend(i2c.i2c_device_schema(0x29))
 
 
@@ -58,6 +62,8 @@ def to_code(config):
 
     cg.add(var.set_integration_time(config[CONF_INTEGRATION_TIME]))
     cg.add(var.set_gain(config[CONF_GAIN]))
+    cg.add(var.set_interrupt_low(config[CONF_INTERRUPT_LOW]))
+    cg.add(var.set_interrupt_high(config[CONF_INTERRUPT_HIGH]))
 
     if CONF_RED_CHANNEL in config:
         sens = yield sensor.new_sensor(config[CONF_RED_CHANNEL])

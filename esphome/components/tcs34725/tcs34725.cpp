@@ -16,6 +16,8 @@ static const uint8_t TCS34725_REGISTER_CDATAL = TCS34725_COMMAND_BIT | 0x14;
 static const uint8_t TCS34725_REGISTER_RDATAL = TCS34725_COMMAND_BIT | 0x16;
 static const uint8_t TCS34725_REGISTER_GDATAL = TCS34725_COMMAND_BIT | 0x18;
 static const uint8_t TCS34725_REGISTER_BDATAL = TCS34725_COMMAND_BIT | 0x1A;
+static const uint8_t TCS34725_REGISTER_INTLOWL = TCS34725_COMMAND_BIT | 0x04;
+static const uint8_t TCS34725_REGISTER_INTHIGHL = TCS34725_COMMAND_BIT | 0x06;
 
 void TCS34725Component::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TCS34725...");
@@ -27,8 +29,15 @@ void TCS34725Component::setup() {
 
   uint8_t integration_reg = this->integration_time_;
   uint8_t gain_reg = this->gain_;
+  uint16_t int_low_reg = this->interrupt_low_;
+  uint16_t int_high_reg = this->interrupt_high_;
   if (!this->write_byte(TCS34725_REGISTER_ATIME, integration_reg) ||
       !this->write_byte(TCS34725_REGISTER_CONTROL, gain_reg)) {
+    this->mark_failed();
+    return;
+  }
+  if (!this->write_byte(TCS34725_REGISTER_INTLOWL, int_low_reg) ||
+      !this->write_byte(TCS34725_REGISTER_INTHIGHL, int_high_reg)) {
     this->mark_failed();
     return;
   }
@@ -73,7 +82,7 @@ void TCS34725Component::update() {
     return;
   }
 
-  const float channel_c = raw_c / 655.35f;
+  const float channel_c = raw_c / 655.35f; //convert to percentage
   const float channel_r = raw_r / 655.35f;
   const float channel_g = raw_g / 655.35f;
   const float channel_b = raw_b / 655.35f;
@@ -118,6 +127,10 @@ void TCS34725Component::set_integration_time(TCS34725IntegrationTime integration
   this->integration_time_ = integration_time;
 }
 void TCS34725Component::set_gain(TCS34725Gain gain) { this->gain_ = gain; }
+
+void TCS34725Component::set_interrupt_low(uint16 interrupt_low){ this->interrupt_low_ = interrupt_low * 65535; };
+void TCS34725Component::set_interrupt_high(uint16 interrupt_high){ this->interrupt_high_ = interrupt_high * 65535; };
+
 
 }  // namespace tcs34725
 }  // namespace esphome
