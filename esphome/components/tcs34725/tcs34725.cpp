@@ -128,8 +128,8 @@ void TCS34725Component::set_integration_time(TCS34725IntegrationTime integration
 }
 void TCS34725Component::set_gain(TCS34725Gain gain) { this->gain_ = gain; }
 
-void TCS34725Component::set_interrupt_low(uint16 interrupt_low){ this->interrupt_low_ = interrupt_low * 65535; };
-void TCS34725Component::set_interrupt_high(uint16 interrupt_high){ this->interrupt_high_ = interrupt_high * 65535; };
+void TCS34725Component::set_interrupt_low(float interrupt_low){ this->interrupt_low_ = interrupt_low * 65535; };
+void TCS34725Component::set_interrupt_high(float interrupt_high){ this->interrupt_high_ = interrupt_high * 65535; };
 
 
 }  // namespace tcs34725
