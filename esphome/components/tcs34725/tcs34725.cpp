@@ -36,11 +36,6 @@ void TCS34725Component::setup() {
     this->mark_failed();
     return;
   }
-  if (!this->write_byte(TCS34725_REGISTER_INTLOWL, int_low_reg) ||
-      !this->write_byte(TCS34725_REGISTER_INTHIGHL, int_high_reg)) {
-    this->mark_failed();
-    return;
-  }
 
   if (!this->write_byte(TCS34725_REGISTER_ENABLE, 0x01)) {  // Power on (internal oscillator on)
     this->mark_failed();
@@ -51,6 +46,16 @@ void TCS34725Component::setup() {
     this->mark_failed();
     return;
   }
+  delay(3);
+  if(int_low_reg>0 || int_high_reg<65535){  //Sets up interrupt limits and enables interrupts
+	  if (!this->write_byte(TCS34725_REGISTER_INTLOWL, int_low_reg) ||
+		  !this->write_byte(TCS34725_REGISTER_INTHIGHL, int_high_reg) ||
+		  !this->write_byte(TCS34725_REGISTER_ENABLE, 0x13) ) { // Keeps power on enabled, plus interrupts
+		this->mark_failed();
+		return;
+	  }
+  }
+  
 }
 
 void TCS34725Component::dump_config() {
