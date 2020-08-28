@@ -43,6 +43,7 @@ class TCS34725Component : public PollingComponent, public i2c::I2CDevice {
   float get_setup_priority() const override;
   void update() override;
   void dump_config() override;
+  void reset();
 
  protected:
   sensor::Sensor *clear_sensor_{nullptr};
@@ -56,6 +57,17 @@ class TCS34725Component : public PollingComponent, public i2c::I2CDevice {
   uint16_t interrupt_low_{0};
   uint16_t interrupt_high_{65535};
 };
+
+template<typename... Ts> class TCS34725ResetAction : public Action<Ts...> {
+ public:
+  explicit TCS34725ResetAction(TCS34725Component *parent) : parent_(parent) {}
+
+  void play(Ts... x) override { this->parent_->reset(); }
+
+ protected:
+  TCS34725Component *parent_;
+};
+
 
 }  // namespace tcs34725
 }  // namespace esphome

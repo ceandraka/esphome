@@ -16,6 +16,7 @@ CONF_INTERRUPT_HIGH = 'interrupt_high'
 
 tcs34725_ns = cg.esphome_ns.namespace('tcs34725')
 TCS34725Component = tcs34725_ns.class_('TCS34725Component', cg.PollingComponent, i2c.I2CDevice)
+TCS34725ResetAction = tcs34725_ns.class_('TCS34725ResetAction', automation.Action)
 
 TCS34725IntegrationTime = tcs34725_ns.enum('TCS34725IntegrationTime')
 TCS34725_INTEGRATION_TIMES = {
@@ -83,3 +84,11 @@ def to_code(config):
     if CONF_COLOR_TEMPERATURE in config:
         sens = yield sensor.new_sensor(config[CONF_COLOR_TEMPERATURE])
         cg.add(var.set_color_temperature_sensor(sens))
+
+
+@automation.register_action('tcs34725.reset_interrupt', TCS34725ResetAction, automation.maybe_simple_id({
+    cv.Required(CONF_ID): cv.use_id(TCS34725Component),
+}))
+def sensor_TCS34725_reset_interrupt_to_code(config, action_id, template_arg, args):
+    paren = yield cg.get_variable(config[CONF_ID])
+    yield cg.new_Pvariable(action_id, template_arg, paren)

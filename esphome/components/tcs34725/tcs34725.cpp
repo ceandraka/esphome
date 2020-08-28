@@ -18,6 +18,7 @@ static const uint8_t TCS34725_REGISTER_GDATAL = TCS34725_COMMAND_BIT | 0x18;
 static const uint8_t TCS34725_REGISTER_BDATAL = TCS34725_COMMAND_BIT | 0x1A;
 static const uint8_t TCS34725_REGISTER_INTLOWL = TCS34725_COMMAND_BIT | 0x04;
 static const uint8_t TCS34725_REGISTER_INTHIGHL = TCS34725_COMMAND_BIT | 0x06;
+static const uint8_t TCS34725_REGISTER_CLEARINT = TCS34725_COMMAND_BIT | 0x66;
 
 void TCS34725Component::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TCS34725...");
@@ -135,6 +136,12 @@ void TCS34725Component::set_gain(TCS34725Gain gain) { this->gain_ = gain; }
 
 void TCS34725Component::set_interrupt_low(float interrupt_low){ this->interrupt_low_ = interrupt_low * 65535; };
 void TCS34725Component::set_interrupt_high(float interrupt_high){ this->interrupt_high_ = interrupt_high * 65535; };
+void reset() {
+	  if (!this->write_byte(TCS34725_REGISTER_CLEARINT)) {  // Clear Interrupt with Command Register
+		this->mark_failed();
+		return;
+	  }
+	}
 
 
 }  // namespace tcs34725
