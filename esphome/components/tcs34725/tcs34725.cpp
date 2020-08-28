@@ -136,7 +136,7 @@ void TCS34725Component::set_gain(TCS34725Gain gain) { this->gain_ = gain; }
 
 void TCS34725Component::set_interrupt_low(float interrupt_low){ this->interrupt_low_ = interrupt_low * 65535; };
 void TCS34725Component::set_interrupt_high(float interrupt_high){ this->interrupt_high_ = interrupt_high * 65535; };
-void reset() {
+void reset_interrupt() {
 	  if (!this->write_byte(TCS34725_REGISTER_CLEARINT)) {  // Clear Interrupt with Command Register
 		this->mark_failed();
 		return;
