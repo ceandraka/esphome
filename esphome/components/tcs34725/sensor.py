@@ -86,9 +86,10 @@ def to_code(config):
         cg.add(var.set_color_temperature_sensor(sens))
 
 
-@automation.register_action('tcs34725.reset_interrupt', TCS34725ResetAction, automation.maybe_simple_id({
+@automation.register_action('sensor.tcs34725.reset_interrupt', TCS34725ResetAction, automation.maybe_simple_id({
     cv.Required(CONF_ID): cv.use_id(TCS34725Component),
 }))
+
 def sensor_TCS34725_reset_interrupt_to_code(config, action_id, template_arg, args):
     paren = yield cg.get_variable(config[CONF_ID])
     yield cg.new_Pvariable(action_id, template_arg, paren)
